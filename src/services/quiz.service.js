@@ -71,7 +71,12 @@ class QuizService {
         );
       }
       const newQuiz = await this.quizRepository.update(id, data);
-
+      const user = await this.userRepository.get(userId);
+      user.questionCount =
+        user.questionCount -
+        oldQuiz.questions.length +
+        newQuiz.questions.length;
+      await user.save();
       return newQuiz;
     } catch (error) {
       if (error instanceof AppError) throw error;
